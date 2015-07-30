@@ -2,47 +2,17 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Reflection;
-using System.Runtime.InteropServices;
-using System.Text;
 using System.Threading.Tasks;
 using Mono.Cecil;
 using Mono.Cecil.Cil;
-using Mono.Collections.Generic;
 
 namespace DateTimeCheck
 {
     public class DateTimeChecker
     {
-        public void IsItInHere(Type typeToSearch)
+        public  IEnumerable<string> FilterMethods(MethodDefinition method)
         {
-            // var module = ModuleDefinition.ReadModule("CecilTest.exe");
-            var module = ModuleDefinition.ReadModule(typeToSearch.Module.FullyQualifiedName);
-
-            //    var type = module.Types.First(x => x.Name == "ClassWithDateTime");
-            //    var method = type.Methods.First(x => x.Name == "MethodWithDateTime");
-            //var q =    FilterMethods(method);
-
-            Collection<TypeDefinition> type = module.Types; //.First(x => x.Name == "ClassWithDateTime");
-            IEnumerable<MethodDefinition> method = type.SelectMany(s => s.Methods);
-
-
-            IEnumerable<string> q = method.SelectMany(s => FilterMethods(s));
-
-
-            //var type = module.Types.SelectMany(s=> s.Methods);
-            //var q = type.Select( FilterMethods);
-            foreach (var methodName in q)
-            {
-                Console.WriteLine(methodName);
-            }
-
-
-        }
-
-        public static IEnumerable<string> FilterMethods(MethodDefinition method)
-        {
-            Console.WriteLine(method.Name);
+            Debug.WriteLine(method.Name);
             foreach (var instruction in method.Body.Instructions)
             {
                 if (instruction.OpCode == OpCodes.Call)
@@ -59,7 +29,6 @@ namespace DateTimeCheck
 
             foreach (var method in methods)
             {
-
 
                 Debug.WriteLine(method.Name);
                 foreach (var instruction in method.Body.Instructions)
