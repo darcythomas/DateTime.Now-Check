@@ -54,8 +54,7 @@ namespace DateTimeCheck
             }
         }
 
-        public IEnumerable<string> MethodsNamesContaining(IEnumerable<MethodDefinition> methods,
-            string fullMethodName)
+        public IEnumerable<string> MethodsNamesContaining(IEnumerable<MethodDefinition> methods, IList<string> fullMethodNames)
         {
 
             foreach (var method in methods)
@@ -68,7 +67,7 @@ namespace DateTimeCheck
                     if (instruction.OpCode == OpCodes.Call)
                     {
                         MethodReference methodCall = instruction.Operand as MethodReference;
-                        if (methodCall != null && methodCall.FullName == fullMethodName)
+                        if (methodCall != null && fullMethodNames.Any(a=> a == methodCall.FullName))
                             yield return method.Name;
                     }
                 }
@@ -77,12 +76,16 @@ namespace DateTimeCheck
 
         public IEnumerable<string> MethodsContainingDateTimeInAssembly(Type typeToSearch)
         {
-            string dateTimeNowName = "System.DateTime System.DateTime::get_Now()";
+            IList<string> dateTimeMethodNames = new List<String>()
+            {
+                "System.DateTime System.DateTime::get_Now()",
+                "System.DateTime System.DateTime::get_UtcNow()",
+                "System.DateTime System.DateTime::get_Today()"
+            };
 
             ModuleDefinition module = ModuleDefinition.ReadModule(typeToSearch.Module.FullyQualifiedName);
-
-            IEnumerable<MethodDefinition> allMethods = module.Types.SelectMany(s => RecurseAllMethods(s));
-            return MethodsNamesContaining(allMethods, dateTimeNowName);
+            IEnumerable<MethodDefinition> allMethods = module.Types.SelectMany(RecurseAllMethods);
+            return MethodsNamesContaining(allMethods, dateTimeMethodNames);
 
         }
 
