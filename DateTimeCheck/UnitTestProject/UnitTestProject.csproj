@@ -57,6 +57,10 @@
       <Project>{0A94C278-D2CA-49F2-A2B3-C7B8FC515CB4}</Project>
       <Name>DateTimeCheck</Name>
     </ProjectReference>
+    <ProjectReference Include="..\ExampleClass\ExampleClass.csproj">
+      <Project>{FBBFEA6F-9BA6-4802-9CC0-D12F601B9388}</Project>
+      <Name>ExampleClass</Name>
+    </ProjectReference>
   </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">

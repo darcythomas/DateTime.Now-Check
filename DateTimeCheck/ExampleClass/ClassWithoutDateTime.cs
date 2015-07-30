@@ -4,13 +4,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DateTimeCheck
+namespace ExampleClass
 {
-    public class DateTimeChecker
+    public class ClassWithoutDateTime
     {
-        public bool IsItInHere(Type type)
+        public void MethodWithoutDateTime()
         {
-            throw new NotImplementedException();
+            Console.WriteLine("No DateTime here");
         }
     }
 }
