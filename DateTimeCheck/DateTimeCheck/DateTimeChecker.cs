@@ -10,40 +10,8 @@ namespace DateTimeCheck
 {
     public class DateTimeChecker
     {
-        public  IEnumerable<string> FilterMethods(MethodDefinition method)
-        {
-            Debug.WriteLine(method.Name);
-            foreach (var instruction in method.Body.Instructions)
-            {
-                if (instruction.OpCode == OpCodes.Call)
-                {
-                    MethodReference methodCall = instruction.Operand as MethodReference;
-                    if (methodCall != null)
-                        yield return methodCall.FullName;
-                }
-            }
-        }
-
-        public IEnumerable<string> MethodsNamesContaining(IEnumerable<MethodDefinition> methods, IList<string> fullMethodNames)
-        {
-
-            foreach (var method in methods)
-            {
-
-                Debug.WriteLine(method.Name);
-                foreach (var instruction in method.Body.Instructions)
-                {
-                    if (instruction.OpCode == OpCodes.Call)
-                    {
-                        MethodReference methodCall = instruction.Operand as MethodReference;
-                        if (methodCall != null && fullMethodNames.Any(a=> a == methodCall.FullName))
-                            yield return method.Name;
-                    }
-                }
-            }
-        }
-
-        public IEnumerable<string> MethodsContainingDateTimeInAssembly(Type typeToSearch)
+        
+        public IEnumerable<string> MethodsContainingDateTime(IEnumerable<MethodDefinition> methods)
         {
             IList<string> dateTimeMethodNames = new List<String>()
             {
@@ -52,28 +20,44 @@ namespace DateTimeCheck
                 "System.DateTime System.DateTime::get_Today()"
             };
 
-            ModuleDefinition module = ModuleDefinition.ReadModule(typeToSearch.Module.FullyQualifiedName);
-            IEnumerable<MethodDefinition> allMethods = module.Types.SelectMany(RecurseAllMethods);
-            return MethodsNamesContaining(allMethods, dateTimeMethodNames);
-
+            foreach (var method in methods)
+            {
+                Debug.WriteLine(method.FullName);
+                foreach (var instruction in method.Body.Instructions)
+                {
+                    if (instruction.OpCode == OpCodes.Call)
+                    {
+                        MethodReference methodCall = instruction.Operand as MethodReference;
+                        if (methodCall != null && dateTimeMethodNames.Any(a => a == methodCall.FullName))
+                            yield return method.FullName;
+                    }
+                }
+            }
         }
 
-        public IEnumerable<MethodDefinition> RecurseAllMethods(TypeDefinition module)
+        public IEnumerable<string> MethodsContainingDateTimeInAssemblyOfType(Type typeToSearch)
         {
-            foreach (MethodDefinition method in module.Methods)
+            ModuleDefinition module = ModuleDefinition.ReadModule(typeToSearch.Module.FullyQualifiedName);
+            IEnumerable<MethodDefinition> allMethods = module.Types.SelectMany(RecursivelyFindAllMethods);
+            return MethodsContainingDateTime(allMethods);
+        }
+
+        public IEnumerable<MethodDefinition> RecursivelyFindAllMethods(TypeDefinition typeDefinition)
+        {
+            //In this level
+            foreach (MethodDefinition method in typeDefinition.Methods)
             {
                 yield return method;
             }
         
-            foreach (var type in module.NestedTypes)
+            //In deeper levels
+            foreach (var type in typeDefinition.NestedTypes)
             {
-                foreach (var method in RecurseAllMethods(type))
+                foreach (var method in RecursivelyFindAllMethods(type))
                 {
                     yield return method;
                 }
-
             }
-
         }
     }
 }

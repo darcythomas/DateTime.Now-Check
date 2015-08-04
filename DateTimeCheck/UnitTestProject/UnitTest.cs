@@ -18,14 +18,14 @@ namespace UnitTestProject
             //Arrange
             DateTimeChecker dateTimeChecker = new DateTimeChecker();
             Type classType = typeof (ClassWithoutDateTime);
-            string methodToTest = "MethodWithoutDateTime";
+            string methodToTest = "System.Void ExampleClass.ClassWithDateTime::MethodWithoutDateTime()";
 
             String methodName =
                 classType.GetMethods()
                 .Single(w => w.Name.Contains(methodToTest)).Name;
 
             //Act
-            IEnumerable<string> methodNames = dateTimeChecker.MethodsContainingDateTimeInAssembly(classType);
+            IEnumerable<string> methodNames = dateTimeChecker.MethodsContainingDateTimeInAssemblyOfType(classType);
 
             //Assert
             Assert.That(methodNames.Where(w => w == methodName), Is.Empty);
@@ -39,14 +39,14 @@ namespace UnitTestProject
             //Arrange
             DateTimeChecker dateTimeChecker = new DateTimeChecker();
             Type classType = typeof(ClassWithDateTime);
-            string methodToTest = "MethodWithDateTimeNow";
+            string methodToTest = "System.Void ExampleClass.ClassWithDateTime::MethodWithDateTimeNow()";
 
             String methodName =
                 classType.GetMethods()
                 .Single(w => w.Name.Contains(methodToTest)).Name;
 
             //Act
-            IEnumerable<string> methodNames = dateTimeChecker.MethodsContainingDateTimeInAssembly(classType);
+            IEnumerable<string> methodNames = dateTimeChecker.MethodsContainingDateTimeInAssemblyOfType(classType);
 
             //Assert
             Assert.That(methodNames.Where(w => w == methodName), Is.Not.Empty);
@@ -59,10 +59,10 @@ namespace UnitTestProject
             //Arrange
             DateTimeChecker dateTimeChecker = new DateTimeChecker();
             Type classType = typeof(PrivateClassWrapper);
-            string methodToTest = "MethodWithDateTimeToday";
+            string methodToTest = "System.Void ExampleClass.ClassWithDateTime::MethodWithDateTimeToday()";
 
             //Act
-            IEnumerable<string> methodNames = dateTimeChecker.MethodsContainingDateTimeInAssembly(classType);
+            IEnumerable<string> methodNames = dateTimeChecker.MethodsContainingDateTimeInAssemblyOfType(classType);
 
             //Assert
             Assert.That(methodNames.Where(w => w == methodToTest), Is.Not.Empty);
@@ -75,10 +75,10 @@ namespace UnitTestProject
             //Arrange
             DateTimeChecker dateTimeChecker = new DateTimeChecker();
             Type classType = typeof(PrivateClassWrapper);
-            string methodToTest = "MethodWithDateTimeUtcNow";
+            string methodToTest = "System.Void ExampleClass.ClassWithDateTime::MethodWithDateTimeUtcNow()";
 
             //Act
-            IEnumerable<string> methodNames = dateTimeChecker.MethodsContainingDateTimeInAssembly(classType);
+            IEnumerable<string> methodNames = dateTimeChecker.MethodsContainingDateTimeInAssemblyOfType(classType).ToList();
 
             //Assert
             Assert.That(methodNames.Where(w => w == methodToTest), Is.Not.Empty);
@@ -91,10 +91,10 @@ namespace UnitTestProject
             //Arrange
             DateTimeChecker dateTimeChecker = new DateTimeChecker();
             Type classType = typeof(PrivateClassWrapper);
-            string methodToTest = "PrivateMethod";
+            string methodToTest = "System.Void PrivateClassWithDateTime::PrivateMethod()";
 
             //Act
-            IEnumerable<string> methodNames = dateTimeChecker.MethodsContainingDateTimeInAssembly(classType);
+            IEnumerable<string> methodNames = dateTimeChecker.MethodsContainingDateTimeInAssemblyOfType(classType);
 
             //Assert
             Assert.That(methodNames.Where(w => w == methodToTest), Is.Not.Empty);
